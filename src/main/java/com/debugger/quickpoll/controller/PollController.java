@@ -22,14 +22,19 @@ import com.debugger.quickpoll.domain.Poll;
 import com.debugger.quickpoll.exception.ResourceNotFoundException;
 import com.debugger.quickpoll.repository.PollRepository;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 
 @RestController
+@Api(value = "polls", description = "Poll API")
 public class PollController {
 	@Inject
 	private PollRepository pollRepository;
 
 	// Get all polls
 	@GetMapping("/polls")
+	@ApiOperation(value = "Retrieves all the polls", response=Poll.class, responseContainer="List")
 	public ResponseEntity<Iterable<Poll>> getAllPolls() {
 		Iterable<Poll> allPolls = pollRepository.findAll();
 		return new ResponseEntity<>(pollRepository.findAll(), HttpStatus.OK);
@@ -38,7 +43,9 @@ public class PollController {
 
     //  create a new poll
 	@PostMapping("/polls")
-	public ResponseEntity<?> createPoll(@Valid @RequestBody Poll poll) {
+	@ApiOperation(value = "Creates a new Poll", 
+	notes="The newly created poll Id will be sent in the location response header", response = Void.class)
+	public ResponseEntity<Void> createPoll(@Valid @RequestBody Poll poll) {
 	        poll = pollRepository.save(poll);
 	        // Set the location header for the newly created resource
 	        HttpHeaders responseHeaders = new HttpHeaders();
@@ -52,6 +59,7 @@ public class PollController {
 	}
 	// Get poll request by Id
 	@GetMapping("/polls/{pollId}")
+	@ApiOperation(value = "Retrieves a Poll associated with the pollId", response=Poll.class)
 	public ResponseEntity<?> getPoll(@PathVariable Long pollId) throws Exception {
 	        Optional<Poll> poll = pollRepository.findById(pollId);
 	        if(!poll.isPresent()) {
