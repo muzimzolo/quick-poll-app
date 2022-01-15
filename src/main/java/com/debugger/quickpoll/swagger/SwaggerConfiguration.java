@@ -16,17 +16,19 @@ public class SwaggerConfiguration {
 	
     @Bean
     // http://localhost:8080/swagger-ui/
-    public Docket api() {
+    public Docket apiV1() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.debugger.quickpoll.controller"))
-                .paths(PathSelectors.any())
+        		.select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.regex("/v1/*.*"))
                 .build()
-                .apiInfo(apiInfo());
+                .apiInfo(apiInfo("v1"))
+                .groupName("v1")
+                .useDefaultResponseMessages(false);
         // docket.useDefaultResponseMessages(false);
         // (PathSelectors.regex("/polls/*.*|/votes/*.*|/computeresult/*.*")));
     }
-    private ApiInfo apiInfo() {
+    private ApiInfo apiInfo(String version) {
         return new ApiInfo(
                 "QuickPoll REST API",
                 "QuickPoll Api for creating and managing polls",
